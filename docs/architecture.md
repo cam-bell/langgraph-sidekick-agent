@@ -57,7 +57,7 @@ flowchart TD
 flowchart TD
     A["User enters prompt + success criteria in app.py"] --> B["process_message()"]
     B --> C["Sidekick.run_superstep()"]
-    C --> D["Initialize graph state\nmessages, criteria, flags"]
+    C --> D["Initialize graph state<br/>messages, criteria, flags"]
     D --> E["Invoke compiled StateGraph (ainvoke)"]
     E --> F["Worker node executes"]
 
@@ -71,21 +71,24 @@ flowchart TD
     K --> F
     J -- "Yes" --> L["End graph execution"]
 
-    L --> M["Return payload to UI:\nuser message\nassistant response\nevaluator feedback"]
+    L --> M["Return payload to UI:<br/>user message<br/>assistant response<br/>evaluator feedback"]
     M --> N["Rendered in Gradio Chatbot"]
 ```
 
 ## Services
 
 ```mermaid
-flowchart LR
+flowchart TD
     subgraph INTERNAL["Internal Services"]
+      direction TB
       UI["Gradio app runtime"]
       ORCH["LangGraph orchestration (sidekick.py)"]
       MEM["MemorySaver checkpointing"]
     end
 
     subgraph TOOLING["Tool Services (sidekick_tools.py)"]
+      direction TB
+      ADAPTER["Tool adapter layer"]
       BROWSER["Playwright Chromium"]
       SERPER["Serper search wrapper"]
       WIKI["Wikipedia API wrapper"]
@@ -94,16 +97,18 @@ flowchart LR
     end
 
     subgraph EXTERNAL["Notification Service"]
+      direction TB
       PUSH["Pushover API"]
     end
 
     UI --> ORCH
     ORCH --> MEM
-    ORCH --> BROWSER
-    ORCH --> SERPER
-    ORCH --> WIKI
-    ORCH --> REPL
-    ORCH --> FM
+    ORCH --> ADAPTER
+    ADAPTER --> BROWSER
+    ADAPTER --> SERPER
+    ADAPTER --> WIKI
+    ADAPTER --> REPL
+    ADAPTER --> FM
     ORCH --> PUSH
 ```
 
